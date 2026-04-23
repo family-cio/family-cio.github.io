@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Share Your Photos 🌊</title>
+  <title>Share Your Photos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -11,9 +11,9 @@
 <body>
 
 <header class="hero">
-  <p class="hero-date">June 14, 2025 &nbsp;·&nbsp; Malibu, California</p>
+  <p class="hero-date">2 May 2026 &nbsp;·&nbsp; Newport Beach, California</p>
   <h1>
-    <span>Emma &amp; James</span>
+    <span>Kaitlyn &amp; Luke</span>
     Share Your Memories
   </h1>
   <div class="divider">
@@ -21,7 +21,7 @@
     <span class="divider-shell">🐚</span>
     <span class="divider-line"></span>
   </div>
-  <p class="hero-sub">Upload your photos from today — we'd love to see every moment</p>
+  <p class="hero-sub">Upload your photos from today; we'd love to see every moment</p>
   <svg class="hero-wave" viewBox="0 0 500 50" preserveAspectRatio="none" width="100%" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 30 Q60 10 120 28 Q180 46 240 26 Q300 6 360 28 Q420 48 500 24 L500 50 L0 50 Z" fill="#f5ede0"/>
   </svg>
@@ -29,14 +29,8 @@
 
 <div class="wrapper">
 
-  <div id="config-warning">
-    <strong>⚠️ Setup required:</strong> Open <code>index.html</code> and set
-    <code>GITHUB_TOKEN</code>, <code>GITHUB_OWNER</code>, and <code>GITHUB_REPO</code>
-    in the &lt;script&gt; before deploying.
-  </div>
-
   <div class="field">
-    <p class="section-label">Your name</p>
+    <p class="section-label">Your name (optional)</p>
     <input type="text" id="guest-name" placeholder="So we know who to thank…" autocomplete="off" />
   </div>
 
@@ -52,12 +46,12 @@
 
   <div id="preview-section">
     <div class="preview-header">
-      <p class="section-label">Selected — <span id="count">0</span> photo<span id="plural"></span></p>
+      <p class="section-label">Selected - <span id="count">0</span> photo<span id="plural"></span></p>
     </div>
     <div id="preview-grid"></div>
   </div>
 
-  <button id="upload-btn" disabled>Share with Emma &amp; James</button>
+  <button id="upload-btn" disabled>Share with Kaitlyn &amp; Luke</button>
 
   <div id="progress-section"></div>
 
@@ -74,17 +68,11 @@
   /* ════════════════════════════════════════════
      ▼ FILL THESE IN BEFORE DEPLOYING ▼
   ════════════════════════════════════════════ */
-  const GITHUB_TOKEN = 'YOUR_GITHUB_PAT_HERE';
-  const GITHUB_OWNER = 'YOUR_GITHUB_USERNAME';
-  const GITHUB_REPO  = 'YOUR_REPO_NAME';
+  const GITHUB_TOKEN = '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';
+  const GITHUB_OWNER = 'family-cio';
+  const GITHUB_REPO  = 'family-cio.github.io';
   const UPLOAD_PATH  = 'uploads';
   /* ════════════════════════════════════════════ */
-
-  const configured =
-    GITHUB_TOKEN !== 'YOUR_GITHUB_PAT_HERE' &&
-    GITHUB_OWNER !== 'YOUR_GITHUB_USERNAME' &&
-    GITHUB_REPO  !== 'YOUR_REPO_NAME';
-  if (configured) document.getElementById('config-warning').classList.add('hidden');
 
   // ── Falling blush-pink hearts ────────────────────────────
   // Heart SVG path scaled to a 1×1 viewBox; JS sets width/height per instance.
@@ -145,7 +133,7 @@
     countEl.textContent = selectedFiles.length;
     pluralEl.textContent = selectedFiles.length === 1 ? '' : 's';
     previewSec.style.display = selectedFiles.length ? 'block' : 'none';
-    uploadBtn.disabled = selectedFiles.length === 0 || !configured;
+    uploadBtn.disabled = selectedFiles.length === 0;
   }
 
   uploadBtn.addEventListener('click', startUpload);

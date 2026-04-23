@@ -102,24 +102,6 @@ h1 span {
   display: flex; flex-direction: column; gap: 22px;
 }
 
-/* ── Config warning ────────────────────────────────────── */
-#config-warning {
-  background: #fff8e8;
-  border: 1.5px solid #e8c96044;
-  border-left: 3px solid #e8b040;
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  font-size: 0.82rem;
-  color: #8a6820;
-  line-height: 1.55;
-}
-#config-warning strong { color: #6a4c10; }
-#config-warning code {
-  background: #0000000c; padding: 1px 5px;
-  border-radius: 4px; font-size: 0.8rem;
-}
-#config-warning.hidden { display: none; }
-
 /* ── Section label ─────────────────────────────────────── */
 .section-label {
   font-size: 0.7rem; font-weight: 500;
