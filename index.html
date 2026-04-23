@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Share Your Photos</title>
+  <title>Share Your Photos 🌊</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -11,9 +11,9 @@
 <body>
 
 <header class="hero">
-  <p class="hero-date">2 May 2026 &nbsp;·&nbsp; Newport Beach, California</p>
+  <p class="hero-date">June 14, 2025 &nbsp;·&nbsp; Malibu, California</p>
   <h1>
-    <span>Kaitlyn &amp; Luke</span>
+    <span>Emma &amp; James</span>
     Share Your Memories
   </h1>
   <div class="divider">
@@ -21,7 +21,7 @@
     <span class="divider-shell">🐚</span>
     <span class="divider-line"></span>
   </div>
-  <p class="hero-sub">Upload your photos from today; we'd love to see every moment</p>
+  <p class="hero-sub">Upload your photos from today — we'd love to see every moment</p>
   <svg class="hero-wave" viewBox="0 0 500 50" preserveAspectRatio="none" width="100%" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 30 Q60 10 120 28 Q180 46 240 26 Q300 6 360 28 Q420 48 500 24 L500 50 L0 50 Z" fill="#f5ede0"/>
   </svg>
@@ -29,8 +29,13 @@
 
 <div class="wrapper">
 
+  <div id="config-warning">
+    <strong>⚠️ Setup required:</strong> Deploy the Cloudflare Worker and set
+    <code>WORKER_URL</code> at the top of the &lt;script&gt; in <code>index.html</code>.
+  </div>
+
   <div class="field">
-    <p class="section-label">Your name (optional)</p>
+    <p class="section-label">Your name</p>
     <input type="text" id="guest-name" placeholder="So we know who to thank…" autocomplete="off" />
   </div>
 
@@ -46,12 +51,12 @@
 
   <div id="preview-section">
     <div class="preview-header">
-      <p class="section-label">Selected - <span id="count">0</span> photo<span id="plural"></span></p>
+      <p class="section-label">Selected — <span id="count">0</span> photo<span id="plural"></span></p>
     </div>
     <div id="preview-grid"></div>
   </div>
 
-  <button id="upload-btn" disabled>Share with Kaitlyn &amp; Luke</button>
+  <button id="upload-btn" disabled>Share with Emma &amp; James</button>
 
   <div id="progress-section"></div>
 
@@ -65,16 +70,12 @@
 <div id="toast"></div>
 
 <script>
-  /* ════════════════════════════════════════════
-     ▼ FILL THESE IN BEFORE DEPLOYING ▼
-  ════════════════════════════════════════════ */
-  // These placeholders are replaced at deploy time by the GitHub Actions workflow.
-  // Do NOT put real values here — store them as repository secrets instead.
-  const GITHUB_TOKEN = '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';
-  const GITHUB_OWNER = 'family-cio';
-  const GITHUB_REPO  = 'family-cio.github.io';
-  const UPLOAD_PATH  = 'uploads';
-  /* ════════════════════════════════════════════ */
+  // ▼ Replace with your Cloudflare Worker URL after deploying the worker ▼
+  const WORKER_URL = 'https://wedding-photo-upload.familycio.workers.dev/upload';
+  // ▲ That's the only thing you need to configure in this file ▲
+
+  const configured = !WORKER_URL.includes('your-worker-name');
+  if (configured) document.getElementById('config-warning').classList.add('hidden');
 
   // ── Falling blush-pink hearts ────────────────────────────
   // Heart SVG path scaled to a 1×1 viewBox; JS sets width/height per instance.
@@ -135,7 +136,7 @@
     countEl.textContent = selectedFiles.length;
     pluralEl.textContent = selectedFiles.length === 1 ? '' : 's';
     previewSec.style.display = selectedFiles.length ? 'block' : 'none';
-    uploadBtn.disabled = selectedFiles.length === 0;
+    uploadBtn.disabled = selectedFiles.length === 0 || !configured;
   }
 
   uploadBtn.addEventListener('click', startUpload);
@@ -160,7 +161,7 @@
     for (const item of items) {
       try {
         setProgStatus(item.el, 'uploading');
-        await uploadToGitHub(item.file, `${UPLOAD_PATH}/${item.name}`);
+        await uploadViaWorker(item.file, item.name);
         setProgStatus(item.el, 'done');
         ok++;
       } catch (err) {
@@ -181,36 +182,17 @@
     );
   }
 
-  async function uploadToGitHub(file, path) {
-    const base64 = await fileToBase64(file);
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-      {
-        method: 'PUT',
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/vnd.github+json',
-        },
-        body: JSON.stringify({
-          message: `Add wedding photo: ${path.split('/').pop()}`,
-          content: base64,
-        }),
-      }
-    );
+  async function uploadViaWorker(file, filename) {
+    const body = new FormData();
+    body.append('file', file);
+    body.append('filename', filename);
+
+    const res = await fetch(WORKER_URL, { method: 'POST', body });
+
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw new Error(data.message || `HTTP ${res.status}`);
+      throw new Error(data.error || `HTTP ${res.status}`);
     }
-  }
-
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload  = () => resolve(r.result.split(',')[1]);
-      r.onerror = () => reject(new Error('Read failed'));
-      r.readAsDataURL(file);
-    });
   }
 
   function createProgItem(filename) {
