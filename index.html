@@ -126,7 +126,7 @@
     countEl.textContent = selectedFiles.length;
     pluralEl.textContent = selectedFiles.length === 1 ? '' : 's';
     previewSec.style.display = selectedFiles.length ? 'block' : 'none';
-    uploadBtn.disabled = selectedFiles.length === 0 || !configured;
+    uploadBtn.disabled = selectedFiles.length === 0;
   }
 
   uploadBtn.addEventListener('click', startUpload);
