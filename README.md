@@ -4,8 +4,8 @@ The site created is located on [GitHub](https://family-cio.github.io/)
 
 ### Design decisions:
 **Github to host the page (HTML, JS, CSS) ~~and contain the photos (in the repo)~~**
-- I separated out the CSS but I left the JS in the HTML because it wasn't worth the effort
-- I uploaded the full code (all 3 versions) to Google Drive. Everything all on the root (fight me)
+- I separated out the CSS and the JS
+- I uploaded the full code (all 4 versions) to Google Drive. Everything all on the root (fight me)
 - Second big mistake: Host the photos in a DIFFERENT repo. Every time a photo was posted, that triggered a website deployment
 
 **Cloudflare to host a JS worker service**
